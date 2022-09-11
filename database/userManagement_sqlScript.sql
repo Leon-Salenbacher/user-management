@@ -33,6 +33,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `usermanagement`.`tblsignInUsers` (
   `sessionKey` INT NOT NULL,
   `userID` INT NOT NULL,
+  `created` DATETIME NOT NULL,
+  `lastUpdate` DATETIME NOT NULL,
   PRIMARY KEY (`sessionKey`),
   CONSTRAINT `fk_tblsignInUsers_tblUsers`
     FOREIGN KEY (`userID`)
