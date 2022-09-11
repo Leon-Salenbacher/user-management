@@ -1,10 +1,11 @@
 class DBConnector:
-    def __init__(self, name):
-        self.__name = name
+    def __init__(self, host, user, password, database):
+        self.__host = host
+        self.__user = user
+        self.__password = password
+        self.__database = database
 
-
-    def print_name(self):
-        print(self.__name)
+    
 
 
 if __name__ == '__main__':
