@@ -31,14 +31,15 @@ ENGINE = InnoDB;
 -- Table `usermanagement`.`tblsignInUsers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `usermanagement`.`tblsignInUsers` (
-  `sessionKey` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `sessionKey` VARCHAR(45) NOT NULL,
   `userID` INT NOT NULL,
   `created` DATETIME NOT NULL,
   `lastUpdate` DATETIME NOT NULL,
-  PRIMARY KEY (`sessionKey`),
+  PRIMARY KEY (`id`),
   CONSTRAINT `fk_tblsignInUsers_tblUsers`
     FOREIGN KEY (`userID`)
-    REFERENCES `mydb`.`tblUsers` (`id`)
+    REFERENCES `usermanagement`.`tblUsers` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

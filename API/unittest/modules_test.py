@@ -26,15 +26,15 @@ class TestModules(unittest.TestCase):
     #namePolicy badcase01
     #name to little character
     def test_namePolicy_badcase01(self):
-        result = modules.passwordPolicy("Le")
+        result = modules.namePolicy("Le")
 
         expected_result = False
         self.assertEqual(result, expected_result)
 
     #namePolicy goodcase01
     def test_namePolicy_goodcase01(self):
-        result = modules.passwordPolicy("Leon")
-
+        result = modules.namePolicy("Leon")
+        
         expected_result = True
         self.assertEqual(result, expected_result)
 
