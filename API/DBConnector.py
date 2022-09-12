@@ -41,6 +41,26 @@ class DBConnector:
                 "status": 400
             }
 
+    def is_Existing(self, sql):
+        try:
+            self.__mycursor.execute(sql)
+
+            if(len(self.__mycursor.fetchall()) > 0):
+                return{
+                    "result": True,
+                    "status": 200
+                }         
+            return{
+                "result": False,
+                "status": 200
+            }   
+        except Exception as error:
+            return{
+                "error": error,
+                "status": 400
+            }
+        
+
 if __name__ == '__main__':
     dbConnector = DBConnector("localhost", "root", "", "usermanagement")
     
@@ -49,7 +69,8 @@ if __name__ == '__main__':
     
     sql_get = "SELECT * FROM tblusers;"
 
+    sql_exist = "SELECT * FROM tblusers WHERE username='Len';"
 
     #res = dbConnector.manipulateData(sql, val)
-    res = dbConnector.executeSQL(sql_get)
+    res = dbConnector.is_Existing(sql_exist)
     print(res)
