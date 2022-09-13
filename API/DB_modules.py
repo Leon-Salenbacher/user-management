@@ -11,7 +11,7 @@ def usernameExisting(username:int):
     res = dbConnector.is_Existing(sql)
 
     if(res['status'] == 200):
-        if(res['status']): 
+        if(res['result'] == True): 
             return{
                 "status": 200,
                 "result": True
@@ -28,16 +28,46 @@ def usernameExisting(username:int):
         }
 
 def emailExisting(email:str):
-    return{
-        "status": 200,
-        "result": True
-    }
+    sql = "SELECT * FROM tblusers WHERE email= '" + email + "';"
+    res = dbConnector.is_Existing(sql)
+
+    if(res['status'] == 200):
+        if(res['result'] == True):
+            return{
+                "status": 200,
+                "result": True
+            }
+        else: 
+            return{
+                "status": 200,
+                "result": False
+            }
+    else:
+        return{
+            "status": 500,
+            "error": res['error']
+        }
 
 def rightPassword(username:str, password:str):
-    return{
-        "status": 200,
-        "result": True
-    }
+    sql = "SELECT * FROM tblusers WHERE username = '" + username + "' AND password = '" + password + "';"
+    res = dbConnector.is_Existing(sql)
+
+    if(res['status'] == 200):
+        if(res['result'] == True):
+            return{
+                "status": 200,
+                "result": True
+            }
+        else: 
+            return{
+                "status": 200,
+                "result": False
+            }
+    else:
+        return{
+            "status": 500,
+            "error": res['error']
+        }
 
 def rightSessionKey(sessionKey:int, username:str):
     return{
