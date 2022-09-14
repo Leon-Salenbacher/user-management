@@ -1,7 +1,7 @@
-from API.DB_modules import emailExisting, usernameExisting
-from API.modules import emailPolicy, namePolicy, passwordPolicy
+from DB_modules import emailExisting, usernameExisting
+from modules import emailPolicy, namePolicy, passwordPolicy
 import DB_modules
-from API.DBConnector import DBConnector
+from DBConnector import DBConnector
 
 class UserManagement:
     def __init__(self):
@@ -24,7 +24,7 @@ class UserManagement:
             return{
                 "status": 500
             }
-        elif(not username_aRes['result'] or email_aRes['result']):
+        elif(username_aRes['result'] or email_aRes['result']):
             return{
                 "status": 400
             }
@@ -36,8 +36,7 @@ class UserManagement:
                 + "VALUES (%s, %s, %s);"
             val = (username, email, password)
             res_db = self.dbConnector.manipulateData(sql, val)
-            
-            if(res_db != 200):
+            if(res_db['status'] != 200):
                 return{
                     "status": 500
                 }
@@ -60,3 +59,8 @@ class UserManagement:
         return{
             "status": 200
         }
+
+
+if __name__ == '__main__':
+    um = UserManagement()
+    res = um.createUser("Leonard1", "leonard1@gmail.com", "Leonard123451")
