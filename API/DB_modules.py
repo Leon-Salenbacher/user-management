@@ -1,10 +1,5 @@
-import re
-from tracemalloc import reset_peak
-from unittest import result
 from DBConnector import DBConnector
 dbConnector = DBConnector("localhost", "root", "", "usermanagement")
-
-
 
 def usernameExisting(username:int):
     sql = "SELECT * FROM tblusers WHERE username = '" + username + "';"
@@ -69,11 +64,27 @@ def rightPassword(username:str, password:str):
             "error": res['error']
         }
 
-def rightSessionKey(sessionKey:int, username:str):
-    return{
-        "status": 200,
-        "result": True
-    }
+def rightSessionKey(sessionKey:str, username:str):
+    sql = "SELECT * FROM tblsigninusers WHERE sessionKey = '" + sessionKey + "' " \
+        + "AND userID = (SELECT id FROM tblusers WHERE username = '" + username + "');"
+
+    res = dbConnector.is_Existing(sql)
+    if(res['status'] == 200):
+        if(res['result'] == True):
+            return{
+                "status": 200,
+                "result": True
+            }
+        else: 
+            return{
+                "status": 200,
+                "result": False
+            }
+    else:
+        return{
+            "status": 500,
+            "error": res['error']
+        }
 
 
 if __name__ == '__main__':
@@ -95,8 +106,8 @@ if __name__ == '__main__':
     print("Expecting: True, Result: " + str(res_password1['result']))
     print("Expecting: False, Result: " + str(res_password2['result']))
     
-    #print("\nchecking rightSessionKey")
-    #res_sessionKey1 = rightSessionKey("9832479832")
-    #res_sessionKey2 = rightSessionKey("9832479832")
-    #print("Expecting: True, Result: " + str(res_sessionKey1['result]))
-    #print("Expecting: False, Result: " + str(res_sessionKey2['result]))
+    print("\nchecking rightSessionKey")
+    res_sessionKey1 = rightSessionKey("839247090242", "Leon")
+    res_sessionKey2 = rightSessionKey("9832479832", "Leon")
+    print("Expecting: True, Result: " + str(res_sessionKey1['result']))
+    print("Expecting: False, Result: " + str(res_sessionKey2['result']))

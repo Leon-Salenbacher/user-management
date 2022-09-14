@@ -28,7 +28,7 @@ class DBConnector:
             }
 
     def manipulateData(self, sql, val):
-        #INSERT INTO [tbl] ([column1]) VALUES (%[value1])
+        #INSERT INTO [tbl] ([column1]) VALUES (%s)
         try:
             self.__mycursor.execute(sql, val)
             self.__mydb.commit()

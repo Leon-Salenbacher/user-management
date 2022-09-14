@@ -12,5 +12,5 @@ def namePolicy(username:str):
         return False
     return True
 
-def proofEmailAvailability(email:str):
+def emailPolicy(email:str):
     return True

@@ -5,8 +5,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import modules
 
 class TestModules(unittest.TestCase):
-    
-    
     #passwordPolicy badcase01 
     #password to little character
     def test_passwordPolicy_badcase01(self):
