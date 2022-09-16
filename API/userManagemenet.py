@@ -44,6 +44,7 @@ class UserManagement:
             }  
 
     def changePassword(self, username:str, oldPassword:str, newPassword:str, sessionKey:str):
+        print("changePassword")
         #Test Policy
         newPassword_pRes = passwordPolicy(newPassword)
         if(not newPassword_pRes):
@@ -63,18 +64,19 @@ class UserManagement:
                 "status": 400
             }
 
-        #create User
+        #change Password on DB
         sql = "UPDATE tblusers " \
                 + "SET password = '" + newPassword + "' " \
                 + "WHERE id = (SELECT id FROM tblusers " \
                 + "WHERE username='" + username + "'); "
-        res_db = self.dbConnector.executeSQL(sql)
+        res_db = self.dbConnector.sql_manipulateData(sql)
         if(res_db['status'] == 200):
             return{
                 "status": 201
             }        
         return{
-            "status": 201
+            "error": res_db['error'],
+            "status": 500
         }
 
     def changeUsername(oldUsername:str, newUsername:str, sessionKey:str):

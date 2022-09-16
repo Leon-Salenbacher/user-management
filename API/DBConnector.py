@@ -45,6 +45,19 @@ class DBConnector:
                 "errror": error,
                 "status": 400
             }
+    
+    def sql_manipulateData(self, sql):
+        try:
+            self.__mycursor.execute(sql)
+            self.__mydb.commit()
+            return{
+                "status": 200
+            }
+        except Exception as error:
+            return{
+                "errror": error,
+                "status": 400
+            }
 
     def is_Existing(self, sql):
         try:
