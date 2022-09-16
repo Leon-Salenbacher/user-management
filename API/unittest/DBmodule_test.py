@@ -41,7 +41,7 @@ class TestDBModules(unittest.TestCase):
         
     #emailExisting goodcase01
     def test_emailExisting_goodcase01(self):
-        result = DB_modules.emailExisting("leon@salenbacher.com")
+        result = DB_modules.emailExisting("leon@gmail.com")
 
         expected_result = {
             "status": 200,
@@ -73,7 +73,7 @@ class TestDBModules(unittest.TestCase):
     
     #rightSessionKey badcase01
     def test_rightSessionKey_badcase01(self):
-        sessionKey = "8392470902"
+        sessionKey = "948027590"
         result = DB_modules.rightSessionKey(sessionKey, 'Leon')
 
         expected_result = {
@@ -85,7 +85,7 @@ class TestDBModules(unittest.TestCase):
     #rightSessionKey goodcase01
     #wrong sessionKey
     def test_rightSessionKey_goodcase01(self):
-        sessionKey = "83924709024"
+        sessionKey = "9480275908"
         result = DB_modules.rightSessionKey(sessionKey, 'Leon')
 
         expected_result = {

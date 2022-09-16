@@ -14,6 +14,12 @@ class DBConnector:
         )
         self.__mycursor = self.__mydb.cursor()
 
+    def get_mycursor(self):
+        return self.__mycursor
+
+    def get_mydb(self):
+        return self.__mydb
+
     def executeSQL(self, sql):
         try:
             self.__mycursor.execute(sql)

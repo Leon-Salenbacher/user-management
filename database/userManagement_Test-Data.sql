@@ -5,6 +5,11 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
+-- Drop Schema usermanagement
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `usermanagement`;  
+
+-- -----------------------------------------------------
 -- Schema usermanagement
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `usermanagement` DEFAULT CHARACTER SET utf8 ;
@@ -23,6 +28,15 @@ CREATE TABLE IF NOT EXISTS `usermanagement`.`tblUsers` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
+-- Insert Data to tblUsers
+-- -----------------------------------------------------
+INSERT INTO tblUsers (id, username, email, password, profilePicture) 
+VALUES
+	(1, 'Leon', 'leon@gmail.com', 'LeonPW', 'default'),
+	(2, 'Rolf', 'Rolf@gmail.com', 'RolfPW', 'default'),
+	(3, 'Max', 'max@gmail.com', 'MaxPW', 'default');
+
+-- -----------------------------------------------------
 -- Table `usermanagement`.`tblsignInUsers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `usermanagement`.`tblsignInUsers` (
@@ -39,6 +53,14 @@ CREATE TABLE IF NOT EXISTS `usermanagement`.`tblsignInUsers` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Insert Data to tblsignInUsers YYYY-MM-DD hh:mm:ss
+-- -----------------------------------------------------
+INSERT INTO tblsignInUsers (id, sessionKey, userID, created, lastUpdate) 
+VALUES
+	(1, '9480275908', '1', '2022-09-16 22:06:02', '2022-09-16 22:06:02'),
+	(2, '420857324', '2', '2022-09-16 10:06:02', '2022-09-16 13:06:02'),
+	(3, '824579802', '3', '2022-09-16 07:06:02', '2022-09-16 20:06:02');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
