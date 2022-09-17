@@ -2,7 +2,8 @@ import unittest
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import DB_modules
+from userManagement.DBConnector import DBConnector
+import userManagement.DB_modules as DB_modules
 #dev DB need to be running!
 
 class TestDBModules(unittest.TestCase):

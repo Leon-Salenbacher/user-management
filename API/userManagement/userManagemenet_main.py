@@ -1,8 +1,11 @@
-from DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword
-from modules import emailPolicy, namePolicy, passwordPolicy
-from DBConnector import DBConnector
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-class UserManagement:
+from userManagement.DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword
+from userManagement.modules import emailPolicy, namePolicy, passwordPolicy
+from userManagement.DBConnector import DBConnector
+
+class UserManager:
     def __init__(self):
         self.dbConnector = DBConnector("localhost", "root", "", "usermanagement")
 
@@ -29,6 +32,7 @@ class UserManagement:
             }
 
         #create User
+        #we always take default picture for now
         if(profilePicture == "default" or True):
             #INSERT INTO [tbl] ([column1]) VALUES (%s)
             sql = "INSERT INTO tblusers (username, email, password, profilePicture) " \
@@ -156,7 +160,7 @@ class UserManagement:
         }
 
 if __name__ == '__main__':
-    userManager = UserManagement()
+    userManager = UserManager()
 
     print("create User: ")
     #create User Leonard1

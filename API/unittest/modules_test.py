@@ -2,7 +2,7 @@ import unittest
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import modules
+import userManagement.modules as modules
 
 class TestModules(unittest.TestCase):
     #passwordPolicy badcase01 

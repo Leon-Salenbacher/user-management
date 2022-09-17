@@ -1,4 +1,6 @@
-from DBConnector import DBConnector
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from userManagement.DBConnector import DBConnector
 dbConnector = DBConnector("localhost", "root", "", "usermanagement")
 
 def usernameExisting(username:int):
