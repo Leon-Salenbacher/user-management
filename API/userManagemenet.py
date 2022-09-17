@@ -44,7 +44,6 @@ class UserManagement:
             }  
 
     def changePassword(self, username:str, oldPassword:str, newPassword:str, sessionKey:str):
-        print("changePassword")
         #Test Policy
         newPassword_pRes = passwordPolicy(newPassword)
         if(not newPassword_pRes):
@@ -75,16 +74,46 @@ class UserManagement:
                 "status": 201
             }        
         return{
-            "error": res_db['error'],
             "status": 500
         }
 
-    def changeUsername(oldUsername:str, newUsername:str, sessionKey:str):
+    def changeUsername(self, oldUsername:str, newUsername:str, sessionKey:str):
+        #Test Policy
+        newUsername_pRes = namePolicy(newUsername)
+        if(not newUsername_pRes):
+            return{
+                "status": 400
+            }
+
+        #Test right SessionKey/oldUsername/newUsername
+        sessionKey_rRes = rightSessionKey(sessionKey, oldUsername)
+        oldUsername_rRes = usernameExisting(oldUsername)
+        newUsername_rRes = usernameExisting(newUsername)
+        if(sessionKey_rRes['status'] != 200 or oldUsername_rRes['status'] != 200 or newUsername_rRes['status'] != 200):
+            return{
+                "status": 500
+            }
+        elif(not sessionKey_rRes['result'] or not oldUsername_rRes['result'] or newUsername_rRes['result']):
+            return{
+                "status": 400
+            }
+
+        #change Username on DB
+        sql = "UPDATE tblusers " \
+                + "SET username = '" + newUsername + "' " \
+                + "WHERE id = (SELECT id FROM tblusers " \
+                + "WHERE username='" + oldUsername + "'); "
+        res_db = self.dbConnector.sql_manipulateData(sql)
+        if(res_db['status'] == 200):
+            return{
+                "status": 201
+            }
         return{
-            "status": 200
+            "status": 500,
+            "error": res_db['error']
         }
 
-    def changeEmail(username:str, newEmail:str, password:str, sessionKey:str):
+    def changeEmail(self, username:str, newEmail:str, password:str, sessionKey:str):
         return{
             "status": 200
         }
@@ -103,8 +132,9 @@ if __name__ == '__main__':
     print(res_createUser)
     print("\n")
 
-    print("changePassword: ")
+    print("change Password: ")
     #change Password for Rolf (id=2)
+    #Password changed to Rolf_new_Password
     res_changePassword = userManager.changePassword(
         "Rolf", 
         "RolfPW", 
@@ -112,4 +142,15 @@ if __name__ == '__main__':
         "420857324"
     )
     print(res_changePassword)
+    print("\n")
+
+    print("change Username: ")
+    #change Username for Max (id=3)
+    #username changed to = Marc
+    res_changeUsername = userManager.changeUsername(
+        "Max",
+        "Marc",
+        "824579802"
+    )
+    print(res_changeUsername)
     print("\n")
