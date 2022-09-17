@@ -109,15 +109,51 @@ class UserManagement:
                 "status": 201
             }
         return{
-            "status": 500,
-            "error": res_db['error']
+            "status": 500
         }
 
     def changeEmail(self, username:str, newEmail:str, password:str, sessionKey:str):
-        return{
-            "status": 200
-        }
+        #Test Policy
+        newEmail_pRes = emailPolicy(newEmail)
+        if(not newEmail_pRes):
+            return{
+                "status": 400
+            }
+        
+        #Test right SessionKey/username/password/newEmail
+        sessionKey_rRes = rightSessionKey(sessionKey, username)
+        newEmail_rRes = emailExisting(newEmail)
+        password_rRes = rightPassword(username, password)
+        username_rRes = usernameExisting(username)
+        if(username_rRes['status'] != 200 or
+            sessionKey_rRes['status'] != 200 or 
+            password_rRes['status'] != 200 or 
+            newEmail_rRes['status'] != 200):
+            return{
+                "status": 500
+            }
+        elif(not sessionKey_rRes['result'] or
+            newEmail_rRes['result'] or
+            not password_rRes['result'] or
+            not username_rRes['result'] 
+            ):
+            return{
+                "status": 400
+            }
 
+        #change Email on DB
+        sql = "UPDATE tblusers " \
+                + "SET email = '" + newEmail + "' " \
+                + "WHERE id = (SELECT id FROM tblusers " \
+                + "WHERE username='" + username + "'); "
+        res_db = self.dbConnector.sql_manipulateData(sql)
+        if(res_db['status'] == 200):
+            return{
+                "status": 201
+            }
+        return{
+            "status": 500
+        }
 
 if __name__ == '__main__':
     userManager = UserManagement()
@@ -153,4 +189,16 @@ if __name__ == '__main__':
         "824579802"
     )
     print(res_changeUsername)
+    print("\n")
+
+    print("change Email: ")
+    #change Email for Leon (id=1)
+    #email changed to leon@salenbacher.com
+    res_changeEmail = userManager.changeEmail(
+        "Leon",
+        "leon@salenbacher.com",
+        "LeonPW",
+        "9480275908"
+    )
+    print(res_changeEmail)
     print("\n")
