@@ -1,8 +1,9 @@
+from datetime import datetime
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from userManagement.DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword
-from userManagement.modules import emailPolicy, namePolicy, passwordPolicy
+from userManagement.modules import emailPolicy, namePolicy, passwordPolicy, dateTime_sqlFormat, generate_sessionKey
 from userManagement.DBConnector import DBConnector
 
 class UserManager:
@@ -159,7 +160,7 @@ class UserManager:
             "status": 500
         }
 
-    def getUserData_by_username(self, username):
+    def getUserData_by_username(self, username:str):
         #Test name existing
         username_rRes = usernameExisting(username)
         if(username_rRes['status'] != 200):
@@ -188,6 +189,41 @@ class UserManager:
             "status": 500
         }
 
+
+    def signIn_user(self, username:str, password:str):
+        #test right username/password
+        username_rRes = usernameExisting(username)
+        password_rRes = rightPassword(username, password)
+        
+        if(username_rRes['status'] != 200 or password_rRes['status'] != 200):
+            return{
+                "here": 1,
+                "status": 500
+            }
+        elif(not username_rRes['result'] or not password_rRes['result']):
+            return{
+                "status": 403
+            } 
+        
+        #get DateTime
+        dateTime = dateTime_sqlFormat()
+
+        #create SessionKey
+        sessionKey = generate_sessionKey()
+
+        #save sessionKey in DB
+        sql = "INSERT INTO tblsigninusers (sessionKey, userID, created, lastUpdate) " \
+            +   "VALUES ('" + sessionKey + "', (SELECT id FROM tblusers WHERE username = '" + username + "'), '" + dateTime + "', '" + dateTime + "');"
+        res_db = self.dbConnector.sql_manipulateData(sql)
+        if(res_db['status'] == 200):
+            return{
+                "status": 201,
+                "sessionKey": sessionKey
+            }
+        return{
+            "status": 500,
+            "error": res_db
+        }
 
 
 if __name__ == '__main__':
@@ -236,4 +272,10 @@ if __name__ == '__main__':
         "9480275908"
     )
     print(res_changeEmail)
+    print("\n")
+
+    print("SignIn User: ")
+    #SignIn user Leon (id=1)
+    res_signInUser = userManager.signIn_user("Leon", "LeonPW")
+    print(res_signInUser)
     print("\n")

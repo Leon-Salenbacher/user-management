@@ -152,6 +152,30 @@ def get_userData_by_username(username):
     res = userManager.getUserData_by_username(username)
     return res
 
+#SignIn User
+@app.route("/userManager/SignIn_User", methods = ['POST'])
+@cross_origin()
+def signIn_user_api():
+    """
+        required Data:
+        {
+            "username": [username],
+            "password": [password]
+        }    
+    """
+    try:
+        data = request.get_json()
+        username = str(data["username"])
+        password = str(data["password"])
+    except:
+        return{
+            "status": 400
+        }
+    
+    res = userManager.signIn_user(username, password)
+    return res
+    
+
 
 
 if __name__ == '__main__':

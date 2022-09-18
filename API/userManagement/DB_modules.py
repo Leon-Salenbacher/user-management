@@ -88,7 +88,6 @@ def rightSessionKey(sessionKey:str, username:str):
             "error": res['error']
         }
 
-
 if __name__ == '__main__':
     print("checking usernameExisting: ")
     res_name1 = usernameExisting("Leon")
