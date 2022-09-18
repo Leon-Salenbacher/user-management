@@ -23,10 +23,10 @@ def create_user_api():
     """
     try:
         data = request.get_json()
-        username = data["username"]
-        email = data["email"]
-        password = data["password"]
-        profilePicture = data["profilePicture"]
+        username = str(data["username"])
+        email = str(data["email"])
+        password = str(data["password"])
+        profilePicture = str(data["profilePicture"])
     except:
         return{
             "status": 400
@@ -50,10 +50,10 @@ def change_password_api():
     """
     try:
         data = request.get_json()
-        username = data["username"]
-        oldPassword = data["oldPassword"]
-        newPassword = data["newPassword"]
-        sessionKey = data["sessionKey"]
+        username = str(data["username"])
+        oldPassword = str(data["oldPassword"])
+        newPassword = str(data["newPassword"])
+        sessionKey = str(data["sessionKey"])
     except:
         return{
             "status": 400
@@ -76,9 +76,9 @@ def change_username_api():
     """
     try:
         data = request.get_json()
-        oldUsername = data["oldUsername"]
-        newUsername = data["newUsername"]
-        sessionKey = data["sessionKey"]
+        oldUsername = str(data["oldUsername"])
+        newUsername = str(data["newUsername"])
+        sessionKey = str(data["sessionKey"])
     except:
         return{
             "status": 400
@@ -102,10 +102,10 @@ def change_email_api():
     """
     try:
         data = request.get_json()
-        username = data["username"]
-        newEmail = data["newEmail"]
-        password = data["password"]
-        sessionKey = data["sessionKey"]
+        username = str(data["username"])
+        newEmail = str(data["newEmail"])
+        password = str(data["password"])
+        sessionKey = str(data["sessionKey"])
     except:
         return{
             "status": 400
@@ -128,9 +128,9 @@ def change_profilePicture_api():
     """
     try:
         data = request.get_json()
-        username = data["username"]
-        profilePicture = data["profilePicture"]
-        sessionKey = data["sessionKey"]
+        username = str(data["username"])
+        profilePicture = str(data["profilePicture"])
+        sessionKey = str(data["sessionKey"])
     except:
         return{
             "status": 400
