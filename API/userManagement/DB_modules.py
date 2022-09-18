@@ -3,7 +3,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from userManagement.DBConnector import DBConnector
 dbConnector = DBConnector("localhost", "root", "", "usermanagement")
 
-def usernameExisting(username:int):
+def usernameExisting(username:str):
     sql = "SELECT * FROM tblusers WHERE username = '" + username + "';"
     res = dbConnector.is_Existing(sql)
 

@@ -159,6 +159,37 @@ class UserManager:
             "status": 500
         }
 
+    def getUserData_by_username(self, username):
+        #Test name existing
+        username_rRes = usernameExisting(username)
+        if(username_rRes['status'] != 200):
+            return{
+                "status": 500
+            }
+        elif(not username_rRes['result']):
+            return{
+                "status": 400
+            }
+        
+        #get Data
+        sql = "SELECT username, email, profilePicture " \
+            + "FROM tblusers WHERE username = '" + username + "';"
+        res_db = self.dbConnector.executeSQL(sql)
+        if(res_db['status'] == 200):
+            return{
+                "status": 200,
+                "data": {
+                    "username": res_db["data"][0][0], 
+                    "email": res_db["data"][0][1],
+                    "profilePicture": res_db["data"][0][2]
+                }
+            }
+        return{
+            "status": 500
+        }
+
+
+
 if __name__ == '__main__':
     userManager = UserManager()
 

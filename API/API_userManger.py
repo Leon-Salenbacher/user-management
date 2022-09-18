@@ -141,6 +141,18 @@ def change_profilePicture_api():
         "status": 501
     }
 
+#get UserData_byUsername
+@app.route("/userManager/get/UserData_by_username/<username>", methods = ['GET'])
+@cross_origin()
+def get_userData_by_username(username):
+    if(not isinstance(username, str)):
+        return{
+            "status": 400
+        }
+    res = userManager.getUserData_by_username(username)
+    return res
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
