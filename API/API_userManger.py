@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 from userManagement.userManagemenet_main import UserManager
-userManager = UserManager()
+userManager =  UserManager()
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -174,9 +174,36 @@ def signIn_user_api():
     
     res = userManager.signIn_user(username, password)
     return res
-    
 
+#SignOut User 
+@app.route("/userManager/SignOut_User", methods = ['POST'])
+@cross_origin()
+def signOut_user_api():
+    """
+        required Data:
+        {
+            "username": [username],
+            "sessionKey": [sessionKey]
+        }    
+    """
+    try:
+        data = request.get_json()
+        username = str(data["username"])
+        sessionKey = str(data["sessionKey"])
+    except:
+        return{
+            "status": 400
+        }
+
+    res = userManager.signOut_user(username, sessionKey)
+    return res
+
+#Test
+@app.route("/userManager/Test", methods = ['POST'])
+@cross_origin()
+def Test_api():
+    return userManager.Test()
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port="5000", host="127.0.0.1")

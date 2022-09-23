@@ -18,6 +18,7 @@ USE `usermanagement` ;
 -- -----------------------------------------------------
 -- Table `usermanagement`.`tblUsers`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `usermanagement`.`tblUsers`;
 CREATE TABLE IF NOT EXISTS `usermanagement`.`tblUsers` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
@@ -39,6 +40,7 @@ VALUES
 -- -----------------------------------------------------
 -- Table `usermanagement`.`tblsignInUsers`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `usermanagement`.`tblsignInUsers`;
 CREATE TABLE IF NOT EXISTS `usermanagement`.`tblsignInUsers` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `sessionKey` VARCHAR(45) NOT NULL,

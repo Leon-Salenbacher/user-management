@@ -10,8 +10,7 @@ class DBConnector:
             host=self.__host,
             user=self.__user,
             password=self.__password,
-            database=self.__database,
-            autocommit =True
+            database=self.__database
         )
         self.__mycursor = self.__mydb.cursor()
 
@@ -82,14 +81,36 @@ class DBConnector:
 
 if __name__ == '__main__':
     dbConnector = DBConnector("localhost", "root", "", "usermanagement")
-    
-    sql_insert = "INSERT INTO tblusers (username, email, password) VALUES (%s, %s, %s)"
-    val_insert = ("Leon", "leon@salenbacher.com", "LeonPW")
-    
-    sql_get = "SELECT * FROM tblusers;"
 
-    sql_exist = "SELECT * FROM tblusers WHERE username='Len';"
+    sql_existing1 = "SELECT * FROM tblusers WHERE username = 'steve';"
+    res_existing1 = dbConnector.is_Existing(sql_existing1)
+    print(type(res_existing1['result']))
+    if(not res_existing1['result']):
+        print("here")
 
-    #res = dbConnector.manipulateData(sql, val)
-    res = dbConnector.is_Existing(sql_exist)
-    print(res)
+    sql1 = "INSERT INTO tblusers (username, email, password, profilePicture) VALUES (%s, %s, %s, %s);"
+    val1 = ('steve', 'steve@gmail.com', 'steve1234', 'default')
+    result1 = dbConnector.manipulateData(sql1, val1)
+    print(result1)
+
+    sql_existing2 = "SELECT * FROM tblusers WHERE username = 'steve';"
+    res_existing2 = dbConnector.is_Existing(sql_existing2)
+    print(res_existing2)
+
+
+
+    sql2 = "SELECT * FROM tblusers WHERE username= 'steve';"
+    result2 = dbConnector.executeSQL(sql2)
+    print(result2)
+
+    input()
+
+    sql3 = "DELETE FROM tblusers WHERE username = 'steve';"
+    result3 = dbConnector.sql_manipulateData(sql3)
+    print(result3)
+
+    sql4 = "SELECT * FROM tblusers WHERE username= 'steve';"
+    result4 = dbConnector.executeSQL(sql4)
+    print(result4)
+
+    input()
