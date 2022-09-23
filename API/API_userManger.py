@@ -198,11 +198,58 @@ def signOut_user_api():
     res = userManager.signOut_user(username, sessionKey)
     return res
 
-#Test
+
+#Update Session
+#Updating "lastUpdate" in tblsigninusers
+@app.route("/userManager/updateSession", methods = ['POST'])
+@cross_origin()
+def update_sesion_api():
+    """
+        required Data:
+        {
+            "username": [username],
+            "sessionKey": [sessionKey]
+        }    
+    """
+    try:
+        data = request.get_json()
+        username = str(data["username"])
+        sessionKey = str(data["sessionKey"])
+    except:
+        return{
+            "status": 400
+        }
+    
+    res = userManager.update_sessionKey_lastUpdate(sessionKey, username)    
+    return res
+    
+#get LogginState
+@app.route("/userManager/get_LogginState", methods = ['POST'])
+@cross_origin()
+def get_LogginState_api():
+    """
+        required Data:
+        {
+            "username": [username],
+            "sessionKey": [sessionKey]
+        }    
+    """
+    try:
+        data = request.get_json()
+        username = str(data["username"])
+        sessionKey = str(data["sessionKey"])
+    except:
+        return{
+            "status": 400
+        }
+    res = userManager.get_logginState(username, sessionKey)
+    return res
+
+#Test Funktion
 @app.route("/userManager/Test", methods = ['POST'])
 @cross_origin()
 def Test_api():
-    return userManager.Test()
+    return userManager.get_logginState("Rolf", "420857324")    
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 import os, sys
+from userManagement.modules import dateTime_sqlFormat, compare_dateTime_isMoreCurrent, get_minData_sessionKey_lastUpdate, convert_stringToDatetime
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from userManagement.DBConnector import DBConnector
 dbConnector = DBConnector("localhost", "root", "", "usermanagement")
@@ -88,6 +89,36 @@ def rightSessionKey(sessionKey:str, username:str):
             "error": res['error']
         }
 
+
+def proof_logginState_lastUpdate(username:str, sessionKey:str):
+    #get DateTime lastUpdate from DB
+    sql_getDatetime = "SELECT lastUpdate FROM tblsigninusers " \
+        + "WHERE userID = (SELECT id FROM tblusers " \
+        + "WHERE username ='" + username + "') AND " \
+        + "sessionKey = '" + sessionKey +  "';"
+    res_getDatetime = dbConnector.executeSQL(sql_getDatetime)
+    if(res_getDatetime['status'] != 200):
+        return{
+            "status": 500,
+            "error": res_getDatetime['error']
+        }
+    lastUpdate_dateTime = res_getDatetime["data"][0][0] 
+    #get min DateTime accapted
+    min_dateTime = get_minData_sessionKey_lastUpdate()
+
+    #compare both Datetimes
+    res_compare = compare_dateTime_isMoreCurrent(lastUpdate_dateTime, min_dateTime)
+    if(not res_compare):
+        return{
+            "status": 403
+        }
+    else: 
+        return{
+            "status": 200
+        }
+
+
+
 if __name__ == '__main__':
     print("checking usernameExisting: ")
     res_name1 = usernameExisting("Leon")
@@ -112,3 +143,5 @@ if __name__ == '__main__':
     res_sessionKey2 = rightSessionKey("9832479832", "Leon")
     print("Expecting: True, Result: " + str(res_sessionKey1['result']))
     print("Expecting: False, Result: " + str(res_sessionKey2['result']))
+
+    

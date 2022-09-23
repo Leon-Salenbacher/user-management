@@ -1,9 +1,8 @@
 from datetime import datetime
-import mysql.connector
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from userManagement.DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword
+from userManagement.DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword, proof_logginState_lastUpdate
 from userManagement.modules import emailPolicy, namePolicy, passwordPolicy, dateTime_sqlFormat, generate_sessionKey
 from userManagement.DBConnector import DBConnector
 
@@ -81,6 +80,12 @@ class UserManager:
             }        
         return{
             "status": 500
+        }
+
+    def passwordForgot(username:str, email:str):
+        #changes password for 10 min and sends temp password per email
+        return{
+            "status": "404"
         }
 
     def changeUsername(self, oldUsername:str, newUsername:str, sessionKey:str):
@@ -252,8 +257,53 @@ class UserManager:
             "error": res_db
         }
 
-    
+    def update_sessionKey_lastUpdate(self, sessionKey:str, username:str):
+        #test right username/sessionKey
+        username_rRes = usernameExisting(username)
+        sessionKey_rRes = rightSessionKey(sessionKey, username)
+        if(username_rRes['status'] != 200 or sessionKey_rRes['status'] != 200):
+            return{
+                "status": 500
+            }
+        elif(not username_rRes['result'] or not sessionKey_rRes['result']):
+            return{
+                "status": 403
+            } 
 
+        #updateing datetime "lastUpdate" in db tblsigninusers
+        time = dateTime_sqlFormat()
+        sql = "UPDATE tblsigninusers SET lastUpdate = '" + time + "' " \
+            + "WHERE sessionKey = '" + sessionKey + "' AND " \
+            + "userID = (SELECT id FROM tblusers WHERE username = '" + username + "');"
+
+        res_db = self.dbConnector.sql_manipulateData(sql)
+        if(res_db['status'] == 200):
+            return{
+                "status": 201,
+            }
+        return{
+            "status": 500,
+            "error": res_db
+        }
+
+    def get_logginState(self, username:str, sessionKey:str):
+        #test right username/sessionKey
+        username_rRes = usernameExisting(username)
+        sessionKey_rRes = rightSessionKey(sessionKey, username)
+        if(username_rRes['status'] != 200 or sessionKey_rRes['status'] != 200):
+            return{
+                "status": 500
+            }
+        elif(not username_rRes['result'] or not sessionKey_rRes['result']):
+            return{
+                "status": 403
+            } 
+
+        #proof logginState
+        res_logginState = proof_logginState_lastUpdate(username, sessionKey)
+        return res_logginState
+        
+        
 
 
 if __name__ == '__main__':
