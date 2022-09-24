@@ -252,8 +252,7 @@ class UserManager:
                 "sessionKey": sessionKey
             }
         return{
-            "status": 500,
-            "error": res_db
+            "status": 500
         }
 
 
