@@ -245,6 +245,8 @@ def get_LogginState_api():
     res = userManager.get_logginState(username, sessionKey)
     return res
 
+
+
 #Test Funktion
 @app.route("/userManager/Test", methods = ['POST'])
 @cross_origin()

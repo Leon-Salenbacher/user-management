@@ -10,6 +10,28 @@ class UserManager:
     def __init__(self):
         self.dbConnector = DBConnector("localhost", "root", "", "usermanagement")
 
+    def get_logginState(self, username:str, sessionKey:str):
+        #test right username/sessionKey
+        username_rRes = usernameExisting(username)
+        sessionKey_rRes = rightSessionKey(sessionKey, username)
+        if(username_rRes['status'] != 200 or sessionKey_rRes['status'] != 200):
+            return{
+                "status": 500
+            }
+        elif(not username_rRes['result'] or not sessionKey_rRes['result']):
+            return{
+                "status": 403
+            } 
+
+        #proof logginState
+        res_logginState = proof_logginState_lastUpdate(username, sessionKey)
+        if(res_logginState['status'] == 500):
+            return {
+                "status": 500
+            }
+        else:
+            return res_logginState
+
     def createUser(self, username:str, email:str, password:str, profilePicture:str = "default"):
         #Test Policy
         username_pRes = namePolicy(username)
@@ -56,14 +78,18 @@ class UserManager:
                 "status": 400
             }
         
-        #Test right SessionKey/oldPassword
-        sessionKey_rRes = rightSessionKey(sessionKey, username)
+        #Test LogginState
+        logginState_res = self.get_logginState(username, sessionKey)
+        if(logginState_res['status'] != 200):
+            return logginState_res
+
+        #Test right oldPassword
         oldPassword_rRes = rightPassword(username, oldPassword)
-        if(sessionKey_rRes['status'] != 200 or oldPassword_rRes['status'] != 200):
+        if(oldPassword_rRes['status'] != 200):
             return{
                 "status": 500
             }
-        elif(not sessionKey_rRes['result'] or not oldPassword_rRes['result']):
+        elif(not oldPassword_rRes['result']):
             return{
                 "status": 400
             }
@@ -96,15 +122,18 @@ class UserManager:
                 "status": 400
             }
 
-        #Test right SessionKey/oldUsername/newUsername
-        sessionKey_rRes = rightSessionKey(sessionKey, oldUsername)
-        oldUsername_rRes = usernameExisting(oldUsername)
+        #Test LogginState
+        logginState_res = self.get_logginState(oldUsername, sessionKey)
+        if(logginState_res['status'] != 200):
+            return logginState_res
+
+        #Test if newUsername already existing
         newUsername_rRes = usernameExisting(newUsername)
-        if(sessionKey_rRes['status'] != 200 or oldUsername_rRes['status'] != 200 or newUsername_rRes['status'] != 200):
+        if(newUsername_rRes['status'] != 200):
             return{
                 "status": 500
             }
-        elif(not sessionKey_rRes['result'] or not oldUsername_rRes['result'] or newUsername_rRes['result']):
+        elif(newUsername_rRes['result']):
             return{
                 "status": 400
             }
@@ -131,23 +160,20 @@ class UserManager:
                 "status": 400
             }
         
-        #Test right SessionKey/username/password/newEmail
-        sessionKey_rRes = rightSessionKey(sessionKey, username)
+        #Test LogginState
+        logginState_res = self.get_logginState(username, sessionKey)
+        if(logginState_res['status'] != 200):
+            return logginState_res
+
+
+        #Test right password and if newEmail already exists
         newEmail_rRes = emailExisting(newEmail)
         password_rRes = rightPassword(username, password)
-        username_rRes = usernameExisting(username)
-        if(username_rRes['status'] != 200 or
-            sessionKey_rRes['status'] != 200 or 
-            password_rRes['status'] != 200 or 
-            newEmail_rRes['status'] != 200):
+        if(password_rRes['status'] != 200 or newEmail_rRes['status'] != 200):
             return{
                 "status": 500
             }
-        elif(not sessionKey_rRes['result'] or
-            newEmail_rRes['result'] or
-            not password_rRes['result'] or
-            not username_rRes['result'] 
-            ):
+        elif(newEmail_rRes['result'] or not password_rRes['result']):
             return{
                 "status": 400
             }
@@ -232,18 +258,10 @@ class UserManager:
 
 
     def signOut_user(self, username:str, sessionKey:str):
-        #test right username/sessionKey
-        username_rRes = usernameExisting(username)
-        sessionKey_rRes = rightSessionKey(sessionKey, username)
-        
-        if(username_rRes['status'] != 200 or sessionKey_rRes['status'] != 200):
-            return{
-                "status": 500
-            }
-        elif(not username_rRes['result'] or not sessionKey_rRes['result']):
-            return{
-                "status": 403
-            } 
+        #Test LogginState
+        logginState_res = self.get_logginState(username, sessionKey)
+        if(logginState_res['status'] != 200):
+            return logginState_res
 
         #delete sign in user in DB
         sql = "DELETE FROM tblsigninusers WHERE userID = (SELECT id FROM tblusers WHERE username = '" + username + "') AND sessionKey = '" + sessionKey + "';"
@@ -258,17 +276,10 @@ class UserManager:
         }
 
     def update_sessionKey_lastUpdate(self, sessionKey:str, username:str):
-        #test right username/sessionKey
-        username_rRes = usernameExisting(username)
-        sessionKey_rRes = rightSessionKey(sessionKey, username)
-        if(username_rRes['status'] != 200 or sessionKey_rRes['status'] != 200):
-            return{
-                "status": 500
-            }
-        elif(not username_rRes['result'] or not sessionKey_rRes['result']):
-            return{
-                "status": 403
-            } 
+        #Test LogginState
+        logginState_res = self.get_logginState(username, sessionKey)
+        if(logginState_res['status'] != 200):
+            return logginState_res
 
         #updateing datetime "lastUpdate" in db tblsigninusers
         time = dateTime_sqlFormat()
@@ -286,24 +297,6 @@ class UserManager:
             "error": res_db
         }
 
-    def get_logginState(self, username:str, sessionKey:str):
-        #test right username/sessionKey
-        username_rRes = usernameExisting(username)
-        sessionKey_rRes = rightSessionKey(sessionKey, username)
-        if(username_rRes['status'] != 200 or sessionKey_rRes['status'] != 200):
-            return{
-                "status": 500
-            }
-        elif(not username_rRes['result'] or not sessionKey_rRes['result']):
-            return{
-                "status": 403
-            } 
-
-        #proof logginState
-        res_logginState = proof_logginState_lastUpdate(username, sessionKey)
-        return res_logginState
-        
-        
 
 
 if __name__ == '__main__':
