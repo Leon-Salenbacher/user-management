@@ -43,7 +43,7 @@ class DBConnector:
             }
         except Exception as error:
             return{
-                "errror": error,
+                "error": error,
                 "status": 400
             }
     
@@ -56,7 +56,7 @@ class DBConnector:
             }
         except Exception as error:
             return{
-                "errror": error,
+                "error": error,
                 "status": 400
             }
 

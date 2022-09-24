@@ -1,5 +1,5 @@
 import os, sys
-from userManagement.modules import dateTime_sqlFormat, compare_dateTime_isMoreCurrent, get_minData_sessionKey_lastUpdate, convert_stringToDatetime
+from userManagement.modules import dateTime_sqlFormat, compare_dateTime_isMoreCurrent, get_minData_sessionKey_lastUpdate, convert_stringToDatetime, generate_sessionKey, dateTime_sqlFormat
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from userManagement.DBConnector import DBConnector
 dbConnector = DBConnector("localhost", "root", "", "usermanagement")
@@ -117,31 +117,59 @@ def proof_logginState_lastUpdate(username:str, sessionKey:str):
             "status": 200
         }
 
+def renew_sessionKey(username:str, sessionKey:str):
+    #sql deleting current sessionKey
+    sql_deleting_sessionKey = "DELETE FROM tblsigninusers " \
+        + "WHERE userID = (SELECT id FROM tblusers " \
+        + "WHERE username = '" + username + "') AND " \
+        + "sessionKey = '" + sessionKey + "';"
+    res_deleting_sessionKey = dbConnector.sql_manipulateData(sql_deleting_sessionKey)
+    if(res_deleting_sessionKey['status'] != 200):
+        
+        return{
+            "status": 500,
+            "error": res_deleting_sessionKey['error']
+        }
+
+    #get required data 
+    res_getUserID = getUserID(username)   
+    if(res_getUserID['status'] != 200):
+        return{
+            "status": 500,
+            "error": res_getUserID['error']
+        }
+    userID = res_getUserID['userID']
+    newSessionKey = generate_sessionKey()
+    cur_dateTime = dateTime_sqlFormat()
+
+    #sql creating new sessionKey
+    sql_creating_sessionKey = "INSERT INTO tblsigninusers (sessionKey, userID, created, lastUpdate) VALUES (%s, %s, %s, %s);"
+    val_creating_sessionKey = (newSessionKey, userID, cur_dateTime, cur_dateTime)
+    res_creating_sessionKey = dbConnector.manipulateData(sql_creating_sessionKey, val_creating_sessionKey)
+    if(res_creating_sessionKey['status'] != 200):
+        return{
+            "status": 500,
+            "error": res_creating_sessionKey['error'],
+        }
+    return{
+        "status": 201,
+        "newSessionKey": newSessionKey
+    }
+
+def getUserID(username:str):
+    sql = "SELECT id FROM tblusers WHERE username = '" + username + "';"
+    res = dbConnector.executeSQL(sql)
+    if(res['status'] != 200):
+        return{
+            "status": 500,
+            "error": res['error']
+        }
+    return{
+        "userID": res['data'][0][0],
+        "status": 200
+    } 
+    
 
 
 if __name__ == '__main__':
-    print("checking usernameExisting: ")
-    res_name1 = usernameExisting("Leon")
-    res_name2 = usernameExisting("Peter")
-    print("Expecting: True, Result: " + str(res_name1['result']))
-    print("Expecting: False, Result: " + str(res_name2['result']))
-
-    print("\nchecking emailExisting: ")
-    res_email1 = emailExisting("leon@salenbacher.com")
-    res_email2 = emailExisting("peter@gmail.com")
-    print("Expecting: True, Result: " + str(res_email1['result']))
-    print("Expecting: False, Result: " + str(res_email1['result']))
-
-    print("\nchecking rightPassword: ")
-    res_password1 = rightPassword("Leon", "LeonPW")
-    res_password2 = rightPassword("Leon", "LeonP2")
-    print("Expecting: True, Result: " + str(res_password1['result']))
-    print("Expecting: False, Result: " + str(res_password2['result']))
-    
-    print("\nchecking rightSessionKey")
-    res_sessionKey1 = rightSessionKey("839247090242", "Leon")
-    res_sessionKey2 = rightSessionKey("9832479832", "Leon")
-    print("Expecting: True, Result: " + str(res_sessionKey1['result']))
-    print("Expecting: False, Result: " + str(res_sessionKey2['result']))
-
-    
+    print(renew_sessionKey("Leon", "9480275908"))

@@ -2,7 +2,7 @@ from datetime import datetime
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from userManagement.DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword, proof_logginState_lastUpdate
+from userManagement.DB_modules import emailExisting, usernameExisting, rightSessionKey, rightPassword, proof_logginState_lastUpdate, renew_sessionKey
 from userManagement.modules import emailPolicy, namePolicy, passwordPolicy, dateTime_sqlFormat, generate_sessionKey
 from userManagement.DBConnector import DBConnector
 
@@ -293,68 +293,20 @@ class UserManager:
                 "status": 201,
             }
         return{
-            "status": 500,
-            "error": res_db
+            "status": 500
         }
 
+    def get_newSessionKey(self, username:str, sessionKey:str):
+        #Test LogginState
+        logginState_res = self.get_logginState(username, sessionKey)
+        if(logginState_res['status'] != 200):
+            return logginState_res
 
-
-if __name__ == '__main__':
-    userManager = UserManager()
-
-    print("create User: ")
-    #create User Leonard1
-    res_createUser = userManager.createUser(
-        "Leonard1", 
-        "leonard1@gmail.com", 
-        "Leonard123451"
-    )
-    print(res_createUser)
-    print("\n")
-
-    print("change Password: ")
-    #change Password for Rolf (id=2)
-    #Password changed to Rolf_new_Password
-    res_changePassword = userManager.changePassword(
-        "Rolf", 
-        "RolfPW", 
-        "Rolf_new_Password", 
-        "420857324"
-    )
-    print(res_changePassword)
-    print("\n")
-
-    print("change Username: ")
-    #change Username for Max (id=3)
-    #username changed to = Marc
-    res_changeUsername = userManager.changeUsername(
-        "Max",
-        "Marc",
-        "824579802"
-    )
-    print(res_changeUsername)
-    print("\n")
-
-    print("change Email: ")
-    #change Email for Leon (id=1)
-    #email changed to leon@salenbacher.com
-    res_changeEmail = userManager.changeEmail(
-        "Leon",
-        "leon@salenbacher.com",
-        "LeonPW",
-        "9480275908"
-    )
-    print(res_changeEmail)
-    print("\n")
-
-    print("SignIn User: ")
-    #SignIn user Leon (id=1)
-    res_signInUser = userManager.signIn_user("Leon", "LeonPW")
-    print(res_signInUser)
-    print("\n")
-
-    print("SignOut User: ")
-    #SignOut user Rolf (id=2) SessionKey (=420857324)
-    res_signOutUser = userManager.signOut_user("Rolf", "420857324")
-    print(res_signOutUser)
-    print("\n")
+        #renew SessionKey
+        res = renew_sessionKey(username, sessionKey)
+        if(res['status'] == 201):
+            return res
+        return{
+            "status": 500
+        }
+        

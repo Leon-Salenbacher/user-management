@@ -245,6 +245,28 @@ def get_LogginState_api():
     res = userManager.get_logginState(username, sessionKey)
     return res
 
+#get new SessionKey
+@app.route("/userManager/new_sessionKey", methods = ['POST'])
+@cross_origin()
+def new_sessionKey_api():
+    """
+        required Data:
+        {
+            "username": [username],
+            "sessionKey": [sessionKey]
+        }    
+    """
+    try:
+        data = request.get_json()
+        username = str(data["username"])
+        sessionKey = str(data["sessionKey"])
+    except:
+        return{
+            "status": 400
+        }
+    res = userManager.get_newSessionKey(username, sessionKey)
+    return res
+
 
 
 #Test Funktion
