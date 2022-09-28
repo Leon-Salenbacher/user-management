@@ -29,7 +29,8 @@ def create_user_api():
         profilePicture = str(data["profilePicture"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
 
     res = userManager.createUser(username, email, password, profilePicture)
@@ -56,7 +57,8 @@ def change_password_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     
     res = userManager.changePassword(username, oldPassword, newPassword, sessionKey)
@@ -81,7 +83,8 @@ def change_username_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     
     res = userManager.changeUsername(oldUsername, newUsername, sessionKey)
@@ -108,7 +111,8 @@ def change_email_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     
     res = userManager.changeEmail(username, newEmail, password, sessionKey)
@@ -133,12 +137,14 @@ def change_profilePicture_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     
     #funktion not implemented yet
     return{
-        "status": 501
+        "status": 501,
+        "error_message": "funktion not implemented yet"
     }
 
 #get UserData_byUsername
@@ -169,7 +175,8 @@ def signIn_user_api():
         password = str(data["password"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     
     res = userManager.signIn_user(username, password)
@@ -192,7 +199,8 @@ def signOut_user_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
 
     res = userManager.signOut_user(username, sessionKey)
@@ -217,7 +225,8 @@ def update_sesion_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     
     res = userManager.update_sessionKey_lastUpdate(sessionKey, username)    
@@ -240,7 +249,8 @@ def get_LogginState_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     res = userManager.get_logginState(username, sessionKey)
     return res
@@ -262,7 +272,8 @@ def new_sessionKey_api():
         sessionKey = str(data["sessionKey"])
     except:
         return{
-            "status": 400
+            "status": 400,
+            "error_message": "missing Data or wrong data format"
         }
     res = userManager.get_newSessionKey(username, sessionKey)
     return res

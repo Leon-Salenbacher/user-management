@@ -20,7 +20,8 @@ class UserManager:
             }
         elif(not username_rRes['result'] or not sessionKey_rRes['result']):
             return{
-                "status": 403
+                "status": 403,
+                "error_message": "Username or SessionKey doesn't exist"
             } 
 
         #proof logginState
@@ -39,7 +40,8 @@ class UserManager:
         email_pRes = emailPolicy(email)
         if(not username_pRes or  not password_pRes or not email_pRes): 
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "Data doesn't fit policy"
             }
 
         #Test Availability
@@ -51,7 +53,8 @@ class UserManager:
             }
         elif(username_aRes['result'] or email_aRes['result']):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "username or email already used"
             }
 
         #create User
@@ -75,7 +78,8 @@ class UserManager:
         newPassword_pRes = passwordPolicy(newPassword)
         if(not newPassword_pRes):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "New password doesn't fit policy."
             }
         
         #Test LogginState
@@ -91,7 +95,8 @@ class UserManager:
             }
         elif(not oldPassword_rRes['result']):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "Old password isn't right"
             }
 
         #change Password on DB
@@ -119,7 +124,8 @@ class UserManager:
         newUsername_pRes = namePolicy(newUsername)
         if(not newUsername_pRes):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "Username doesn't fit policy"
             }
 
         #Test LogginState
@@ -135,7 +141,8 @@ class UserManager:
             }
         elif(newUsername_rRes['result']):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "Username already existing"
             }
 
         #change Username on DB
@@ -157,7 +164,8 @@ class UserManager:
         newEmail_pRes = emailPolicy(newEmail)
         if(not newEmail_pRes):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "new Email doesn't fit policy"
             }
         
         #Test LogginState
@@ -175,7 +183,8 @@ class UserManager:
             }
         elif(newEmail_rRes['result'] or not password_rRes['result']):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "new Email already existing or wrong Password"
             }
 
         #change Email on DB
@@ -201,7 +210,8 @@ class UserManager:
             }
         elif(not username_rRes['result']):
             return{
-                "status": 400
+                "status": 400,
+                "error_message": "Username not Existing"
             }
         
         #get Data
@@ -233,7 +243,8 @@ class UserManager:
             }
         elif(not username_rRes['result'] or not password_rRes['result']):
             return{
-                "status": 403
+                "status": 403,
+                "error_message": "Wrong Password or Username"
             } 
         
         #get DateTime
