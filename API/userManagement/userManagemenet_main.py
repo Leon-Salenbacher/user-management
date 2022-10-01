@@ -319,4 +319,3 @@ class UserManager:
         return{
             "status": 500
         }
-        

@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 from userManagement.userManagemenet_main import UserManager
+from userManagement.DB_modules import usernameExisting, emailExisting 
 userManager =  UserManager()
 
 app = Flask(__name__)
@@ -278,6 +279,21 @@ def new_sessionKey_api():
     res = userManager.get_newSessionKey(username, sessionKey)
     return res
 
+#get Username Existing
+@app.route("/userManager/existing/username/<username>", methods = ['GET'])
+@cross_origin()
+def existing_username_api(username):
+    res = usernameExisting(username)
+    if(res['status'] == 500): return {"status": 500}
+    else: return res
+
+#get email Existing
+@app.route("/userManager/existing/email/<email>", methods = ['GET'])
+@cross_origin()
+def existing_email_api(email):
+    res = emailExisting(email)
+    if(res['status'] == 500): return {"status": 500}
+    else: return res
 
 
 #Test Funktion
